@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+	font-weight: bold;
+}
+.sc1 {
+	color: #0000FF;
+}
+.sc3 {
+	color: #FF0000;
+}
+.sc4 {
+}
+.sc6 {
+	font-weight: bold;
+	color: #8000FF;
+}
+.sc8 {
+}
+.sc9 {
+	color: #008000;
+}
+.sc11 {
+	color: #0000FF;
+}
+.sc21 {
+}
+.sc26 {
+}
+.sc40 {
+}
+.sc41 {
+}
+.sc43 {
+	color: #008000;
+}
+.sc45 {
+	color: #FF0000;
+}
+.sc46 {
+}
+.sc47 {
+	font-weight: bold;
+	font-style: italic;
+	color: #000080;
+}
+.sc48 {
+	color: #808080;
+}
+.sc49 {
+	color: #808080;
+}
+.sc50 {
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #CBE9CB; "><span class="sc21">&lt;!</span><span class="sc26">DOCTYPE html</span><span class="sc21">&gt;</span><span class="sc0">
+</span><span class="sc1">&lt;html</span><span class="sc8"> </span><span class="sc3">lang</span><span class="sc8">=</span><span class="sc6">"en-US"</span><span class="sc1">&gt;</span><span class="sc0">
+</span><span class="sc1">&lt;head&gt;</span><span class="sc0">
+    </span><span class="sc1">&lt;meta</span><span class="sc8"> </span><span class="sc3">charset</span><span class="sc8">=</span><span class="sc6">"UTF-8"</span><span class="sc1">&gt;</span><span class="sc0">
+    </span><span class="sc1">&lt;title&gt;</span><span class="sc0">BootstrapValidator 动态绑定验证项</span><span class="sc1">&lt;/title&gt;</span><span class="sc0">
+    </span><span class="sc9">&lt;!-- 通过在标签上添加附加属性来达到验证项绑定效果。
+        当用户的name属性为随机动态生成时，不能通过name=“validItem”绑定验证
+        此时需要采用手动绑定属性，手动开启验证等操作
+        书写格式严格按照bootstrap格式编写
+    --&gt;</span><span class="sc0">
+
+    </span><span class="sc1">&lt;link</span><span class="sc8"> </span><span class="sc3">rel</span><span class="sc8">=</span><span class="sc6">"stylesheet"</span><span class="sc8"> </span><span class="sc3">href</span><span class="sc8">=</span><span class="sc6">"../../Lib/bootstrap.css"</span><span class="sc11">/&gt;</span><span class="sc0">
+    </span><span class="sc1">&lt;link</span><span class="sc8"> </span><span class="sc3">rel</span><span class="sc8">=</span><span class="sc6">"stylesheet"</span><span class="sc8"> </span><span class="sc3">href</span><span class="sc8">=</span><span class="sc6">"../../Lib/bootstrapValidator.min.css"</span><span class="sc11">/&gt;</span><span class="sc0">
+
+    </span><span class="sc1">&lt;script</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"text/javascript"</span><span class="sc8"> </span><span class="sc3">src</span><span class="sc8">=</span><span class="sc6">"../../Lib/jquery.min.js"</span><span class="sc1">&gt;&lt;/script&gt;</span><span class="sc0">
+    </span><span class="sc1">&lt;script</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"text/javascript"</span><span class="sc8"> </span><span class="sc3">src</span><span class="sc8">=</span><span class="sc6">"../../Lib/bootstrap.min.js"</span><span class="sc1">&gt;&lt;/script&gt;</span><span class="sc0">
+    </span><span class="sc1">&lt;script</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"text/javascript"</span><span class="sc8"> </span><span class="sc3">src</span><span class="sc8">=</span><span class="sc6">"../../Lib/bootstrapValidator.min.js"</span><span class="sc1">&gt;&lt;/script&gt;</span><span class="sc0">
+    </span><span class="sc1">&lt;script</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"text/javascript"</span><span class="sc8"> </span><span class="sc3">src</span><span class="sc8">=</span><span class="sc6">"../../Lib/bootstrapValidator.extend.js"</span><span class="sc1">&gt;&lt;/script&gt;</span><span class="sc0">
+</span><span class="sc1">&lt;/head&gt;</span><span class="sc0">
+</span><span class="sc1">&lt;body&gt;</span><span class="sc0">
+</span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"container"</span><span class="sc1">&gt;</span><span class="sc0">
+    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"row"</span><span class="sc1">&gt;</span><span class="sc0">
+        </span><span class="sc9">&lt;!-- form: --&gt;</span><span class="sc0">
+        </span><span class="sc1">&lt;section&gt;</span><span class="sc0">
+            </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-8 col-lg-offset-2"</span><span class="sc1">&gt;</span><span class="sc0">
+                </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"page-header"</span><span class="sc1">&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;h2&gt;</span><span class="sc0">Sign up</span><span class="sc1">&lt;/h2&gt;</span><span class="sc0">
+                </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+                </span><span class="sc1">&lt;form</span><span class="sc8"> </span><span class="sc3">id</span><span class="sc8">=</span><span class="sc6">"defaultForm"</span><span class="sc8"> </span><span class="sc3">method</span><span class="sc8">=</span><span class="sc6">"post"</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-horizontal"</span><span class="sc8"> </span><span class="sc3">action</span><span class="sc8">=</span><span class="sc6">"target.php"</span><span class="sc1">&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-group"</span><span class="sc1">&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;label</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-3 control-label"</span><span class="sc1">&gt;</span><span class="sc0">Full name</span><span class="sc1">&lt;/label&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-4"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;input</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"text"</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-control"</span><span class="sc8"> </span><span class="sc3">name</span><span class="sc8">=</span><span class="sc6">"firstName"</span><span class="sc8"> </span><span class="sc3">placeholder</span><span class="sc8">=</span><span class="sc6">"First name"</span><span class="sc8"> </span><span class="sc4">data-bv-trigger</span><span class="sc8">=</span><span class="sc6">"keyup"</span><span class="sc8"> </span><span class="sc4">required</span><span class="sc8"> </span><span class="sc4">data-bv-notempty-message</span><span class="sc8">=</span><span class="sc6">"The first name is required and cannot be empty"</span><span class="sc8"> </span><span class="sc11">/&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-4"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;input</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"text"</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-control"</span><span class="sc8"> </span><span class="sc3">name</span><span class="sc8">=</span><span class="sc6">"lastName"</span><span class="sc8"> </span><span class="sc3">placeholder</span><span class="sc8">=</span><span class="sc6">"Last name"</span><span class="sc8"> </span><span class="sc4">required</span><span class="sc8"> </span><span class="sc4">data-bv-trigger</span><span class="sc8">=</span><span class="sc6">"blur"</span><span class="sc8"> </span><span class="sc4">data-bv-notempty-message</span><span class="sc8">=</span><span class="sc6">"The last name is required and cannot be empty"</span><span class="sc8"> </span><span class="sc11">/&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+                    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-group"</span><span class="sc1">&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;label</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-3 control-label"</span><span class="sc1">&gt;</span><span class="sc0">Username</span><span class="sc1">&lt;/label&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-5"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;input</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"text"</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-control"</span><span class="sc8"> </span><span class="sc3">name</span><span class="sc8">=</span><span class="sc6">"username"</span><span class="sc8">
+                                   </span><span class="sc4">data-bv-trigger</span><span class="sc8">=</span><span class="sc6">"blur"</span><span class="sc8">
+                                   </span><span class="sc4">data-bv-message</span><span class="sc8">=</span><span class="sc6">"The username is not valid"</span><span class="sc8">
+                                   </span><span class="sc4">required</span><span class="sc8"> </span><span class="sc4">data-bv-notempty-message</span><span class="sc8">=</span><span class="sc6">"The username is required and cannot be empty"</span><span class="sc8">
+                                   </span><span class="sc4">pattern</span><span class="sc8">=</span><span class="sc6">"[a-zA-Z0-9_\.]+"</span><span class="sc8"> </span><span class="sc4">data-bv-regexp-message</span><span class="sc8">=</span><span class="sc6">"The username can only consist of alphabetical, number, dot and underscore"</span><span class="sc8">
+                                   </span><span class="sc4">minlength</span><span class="sc8">=</span><span class="sc6">"5"</span><span class="sc8"> </span><span class="sc4">data-bv-stringlength-message</span><span class="sc8">=</span><span class="sc6">"The username must have at least 5 characters"</span><span class="sc8"> </span><span class="sc11">/&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+                    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-group email"</span><span class="sc1">&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;label</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-3 control-label"</span><span class="sc1">&gt;</span><span class="sc0">Email address</span><span class="sc1">&lt;/label&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-5"</span><span class="sc8"> </span><span class="sc3">id</span><span class="sc8">=</span><span class="sc6">"mail"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;input</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-control"</span><span class="sc8"> </span><span class="sc3">name</span><span class="sc8">=</span><span class="sc6">"email"</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"email"</span><span class="sc8"> </span><span class="sc4">required</span><span class="sc8"> </span><span class="sc4">data-bv-emailaddress-message</span><span class="sc8">=</span><span class="sc6">"The input is not a valid email address"</span><span class="sc8"> </span><span class="sc11">/&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+                    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-group"</span><span class="sc1">&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;label</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-3 control-label"</span><span class="sc1">&gt;</span><span class="sc0">Website</span><span class="sc1">&lt;/label&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-5"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;input</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-control"</span><span class="sc8"> </span><span class="sc3">name</span><span class="sc8">=</span><span class="sc6">"website"</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"url"</span><span class="sc8"> </span><span class="sc4">required</span><span class="sc8"> </span><span class="sc4">data-bv-uri-message</span><span class="sc8">=</span><span class="sc6">"The input is not a valid website address"</span><span class="sc8"> </span><span class="sc11">/&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+                    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-group"</span><span class="sc1">&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;label</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-3 control-label"</span><span class="sc1">&gt;</span><span class="sc0">Fav color</span><span class="sc1">&lt;/label&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-3"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;input</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-control"</span><span class="sc8"> </span><span class="sc3">name</span><span class="sc8">=</span><span class="sc6">"color"</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"color"</span><span class="sc8"> </span><span class="sc4">required</span><span class="sc8"> </span><span class="sc4">data-bv-hexcolor-message</span><span class="sc8">=</span><span class="sc6">"The input is not a valid color code"</span><span class="sc8"> </span><span class="sc11">/&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+                    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-group"</span><span class="sc1">&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;label</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-3 control-label"</span><span class="sc1">&gt;</span><span class="sc0">Age</span><span class="sc1">&lt;/label&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-2"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;input</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"number"</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-control"</span><span class="sc8"> </span><span class="sc3">name</span><span class="sc8">=</span><span class="sc6">"age"</span><span class="sc8"> </span><span class="sc4">step</span><span class="sc8">=</span><span class="sc6">"1"</span><span class="sc8">
+                                   </span><span class="sc4">min</span><span class="sc8">=</span><span class="sc6">"10"</span><span class="sc8"> </span><span class="sc4">data-bv-greaterthan-inclusive</span><span class="sc8">=</span><span class="sc6">"false"</span><span class="sc8"> </span><span class="sc4">data-bv-greaterthan-message</span><span class="sc8">=</span><span class="sc6">"The input must be greater than or equal to 10"</span><span class="sc8">
+                                   </span><span class="sc4">max</span><span class="sc8">=</span><span class="sc6">"100"</span><span class="sc8"> </span><span class="sc4">data-bv-lessthan-inclusive</span><span class="sc8">=</span><span class="sc6">"true"</span><span class="sc8"> </span><span class="sc4">data-bv-lessthan-message</span><span class="sc8">=</span><span class="sc6">"The input must be less than 100"</span><span class="sc8">
+                                    </span><span class="sc11">/&gt;</span><span class="sc0">
+                            </span><span class="sc9">&lt;!--&lt;input type="range" class="form-control" name="age"
+                                   required
+                                   min="10" max="100" data-bv-between-message="The input must be between 10 and 100"
+                                    /&gt;--&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+                    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-group"</span><span class="sc1">&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;label</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-3 control-label"</span><span class="sc1">&gt;</span><span class="sc0">Bio</span><span class="sc1">&lt;/label&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-5"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;textarea</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-control"</span><span class="sc8"> </span><span class="sc3">name</span><span class="sc8">=</span><span class="sc6">"bio"</span><span class="sc8"> </span><span class="sc3">rows</span><span class="sc8">=</span><span class="sc6">"10"</span><span class="sc8"> </span><span class="sc4">data-bv-stringlength</span><span class="sc8"> </span><span class="sc4">data-bv-stringlength-max</span><span class="sc8">=</span><span class="sc6">"100"</span><span class="sc8"> </span><span class="sc4">data-bv-stringlength-message</span><span class="sc8">=</span><span class="sc6">"The bio must be less than 100 characters long"</span><span class="sc1">&gt;&lt;/textarea&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+                    </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"form-group"</span><span class="sc1">&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;div</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"col-lg-9 col-lg-offset-3"</span><span class="sc1">&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;button</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"submit"</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"btn btn-primary"</span><span class="sc1">&gt;</span><span class="sc0">Sign up</span><span class="sc1">&lt;/button&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;button</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"button"</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"btn btn-primary doCheck"</span><span class="sc1">&gt;</span><span class="sc0">Sign up Manualy</span><span class="sc1">&lt;/button&gt;</span><span class="sc0">
+                            </span><span class="sc1">&lt;button</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"button"</span><span class="sc8"> </span><span class="sc3">class</span><span class="sc8">=</span><span class="sc6">"btn btn-primary add"</span><span class="sc8"> </span><span class="sc1">&gt;</span><span class="sc0">add</span><span class="sc1">&lt;/button&gt;</span><span class="sc0">
+                        </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+                </span><span class="sc1">&lt;/form&gt;</span><span class="sc0">
+            </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+        </span><span class="sc1">&lt;/section&gt;</span><span class="sc0">
+        </span><span class="sc9">&lt;!-- :form --&gt;</span><span class="sc0">
+    </span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+</span><span class="sc1">&lt;/div&gt;</span><span class="sc0">
+
+</span><span class="sc1">&lt;script</span><span class="sc8"> </span><span class="sc3">type</span><span class="sc8">=</span><span class="sc6">"text/javascript"</span><span class="sc1">&gt;</span><span class="sc40">
+</span><span class="sc41">    </span><span class="sc47">var</span><span class="sc41"> </span><span class="sc46">bvinstance</span><span class="sc50">,</span><span class="sc41"> 
+    </span><span class="sc43">// 自增变量</span><span class="sc41">
+    </span><span class="sc46">rowID</span><span class="sc41"> </span><span class="sc50">=</span><span class="sc41"> </span><span class="sc45">0</span><span class="sc50">,</span><span class="sc41"> 
+    </span><span class="sc43">// 定义验证表单id，单有多个表单时，可定义多个，分别开启验证</span><span class="sc41">
+    </span><span class="sc46">formid</span><span class="sc41"> </span><span class="sc50">=</span><span class="sc41"> </span><span class="sc48">"#defaultForm"</span><span class="sc50">;</span><span class="sc41">
+    </span><span class="sc43">// 待验证项列表对象,格式为{规则:控件id | [控件id]}</span><span class="sc41">
+    </span><span class="sc47">var</span><span class="sc41"> </span><span class="sc46">opts</span><span class="sc41"> </span><span class="sc50">=</span><span class="sc41"> </span><span class="sc50">{</span><span class="sc41">
+        </span><span class="sc49">'formAttribute'</span><span class="sc41"> </span><span class="sc50">:</span><span class="sc41"> </span><span class="sc48">"defaultForm"</span><span class="sc50">,</span><span class="sc41">
+        </span><span class="sc49">'notEmpty'</span><span class="sc41"> </span><span class="sc50">:</span><span class="sc41"> </span><span class="sc50">[],</span><span class="sc41">
+        </span><span class="sc49">'email'</span><span class="sc41"> </span><span class="sc50">:</span><span class="sc41"> </span><span class="sc50">[]</span><span class="sc41">
+    </span><span class="sc50">};</span><span class="sc41">
+    $</span><span class="sc50">(</span><span class="sc46">document</span><span class="sc50">).</span><span class="sc46">ready</span><span class="sc50">(</span><span class="sc47">function</span><span class="sc41"> </span><span class="sc50">()</span><span class="sc41"> </span><span class="sc50">{</span><span class="sc41">
+
+        </span><span class="sc46">bvinstance</span><span class="sc41"> </span><span class="sc50">=</span><span class="sc41"> </span><span class="sc46">BpValidatorExtend</span><span class="sc50">();</span><span class="sc41">
+        </span><span class="sc46">bvinstance.bootstrapValidatorManualyOpen</span><span class="sc50">(</span><span class="sc46">formid</span><span class="sc50">);</span><span class="sc41">
+        </span><span class="sc43">//手动检查form表单项目</span><span class="sc41">
+        $</span><span class="sc50">(</span><span class="sc48">".doCheck"</span><span class="sc50">).</span><span class="sc46">click</span><span class="sc50">(</span><span class="sc47">function</span><span class="sc41"> </span><span class="sc50">()</span><span class="sc41"> </span><span class="sc50">{</span><span class="sc41">
+            </span><span class="sc47">var</span><span class="sc41"> </span><span class="sc46">bv</span><span class="sc41"> </span><span class="sc50">=</span><span class="sc41"> </span><span class="sc46">bvinstance.bootstrapValidate</span><span class="sc50">(</span><span class="sc46">formid</span><span class="sc50">);</span><span class="sc41">
+            </span><span class="sc43">// 执行验证</span><span class="sc41">
+            </span><span class="sc46">bv.validate</span><span class="sc50">();</span><span class="sc41">
+
+            </span><span class="sc43">// 验证结果不通过，返回页面</span><span class="sc41">
+            </span><span class="sc47">if</span><span class="sc41"> </span><span class="sc50">(!</span><span class="sc46">bv.isValid</span><span class="sc50">())</span><span class="sc41"> </span><span class="sc50">{</span><span class="sc41">
+                </span><span class="sc46">console.log</span><span class="sc50">(</span><span class="sc48">"check field !"</span><span class="sc50">);</span><span class="sc41">
+                </span><span class="sc47">return</span><span class="sc50">;</span><span class="sc41">
+            </span><span class="sc50">};</span><span class="sc41">
+
+        </span><span class="sc50">});</span><span class="sc41">
+        </span><span class="sc43">// 模拟动态添加验证项，通过obj.setattr添加验证属性</span><span class="sc41">
+        $</span><span class="sc50">(</span><span class="sc48">".add"</span><span class="sc50">).</span><span class="sc46">click</span><span class="sc50">(</span><span class="sc47">function</span><span class="sc41"> </span><span class="sc50">()</span><span class="sc41"> </span><span class="sc50">{</span><span class="sc41">
+            </span><span class="sc43">//控件销毁</span><span class="sc41">
+            </span><span class="sc46">bvinstance.bootstrapValidatorDestroy</span><span class="sc50">(</span><span class="sc46">formid</span><span class="sc50">);</span><span class="sc41">
+            </span><span class="sc43">//$('#defaultForm').data('bootstrapValidator').destroy()</span><span class="sc41">
+            </span><span class="sc47">var</span><span class="sc41"> </span><span class="sc46">newEmailTD</span><span class="sc41"> </span><span class="sc50">=</span><span class="sc41"> $</span><span class="sc50">(</span><span class="sc48">"#mail"</span><span class="sc50">)[</span><span class="sc45">0</span><span class="sc50">];</span><span class="sc41">
+            </span><span class="sc43">//添加列内容</span><span class="sc41">
+            </span><span class="sc46">newEmailTD.innerHTML</span><span class="sc41"> </span><span class="sc50">+=</span><span class="sc41"> </span><span class="sc48">"&lt;input class='form-control' name='txtEMail"</span><span class="sc41"> </span><span class="sc50">+</span><span class="sc41"> </span><span class="sc46">rowID</span><span class="sc41"> </span><span class="sc50">+</span><span class="sc41"> </span><span class="sc48">"' id='txtEmail"</span><span class="sc41"> </span><span class="sc50">+</span><span class="sc41"> </span><span class="sc46">rowID</span><span class="sc41"> </span><span class="sc50">+</span><span class="sc41"> </span><span class="sc48">"' type='mail' size='20' /&gt;"</span><span class="sc50">;</span><span class="sc41">
+            </span><span class="sc43">// 动态添加待验证项目id到指定验证规则列表</span><span class="sc41">
+            </span><span class="sc46">opts</span><span class="sc50">[</span><span class="sc48">"notEmpty"</span><span class="sc50">].</span><span class="sc46">push</span><span class="sc50">(</span><span class="sc49">'txtEmail'</span><span class="sc41"> </span><span class="sc50">+</span><span class="sc41"> </span><span class="sc46">rowID</span><span class="sc50">);</span><span class="sc41">
+            </span><span class="sc46">opts</span><span class="sc50">[</span><span class="sc48">"email"</span><span class="sc50">].</span><span class="sc46">push</span><span class="sc50">(</span><span class="sc49">'txtEmail'</span><span class="sc41"> </span><span class="sc50">+</span><span class="sc41"> </span><span class="sc46">rowID</span><span class="sc50">);</span><span class="sc41">
+            </span><span class="sc43">// 验证规则绑定</span><span class="sc41">
+            </span><span class="sc46">bvinstance.bootstrapValidatorBind</span><span class="sc50">(</span><span class="sc46">opts</span><span class="sc50">);</span><span class="sc41">
+            </span><span class="sc46">rowID</span><span class="sc50">++;</span><span class="sc41">
+            </span><span class="sc43">// 开启验证</span><span class="sc41">
+            </span><span class="sc46">bvinstance.bootstrapValidatorManualyOpen</span><span class="sc50">(</span><span class="sc46">formid</span><span class="sc50">);</span><span class="sc41">
+            </span><span class="sc43">//$('#defaultForm').bootstrapValidator();</span><span class="sc41">
+        </span><span class="sc50">});</span><span class="sc41">
+        </span><span class="sc43">//$('#defaultForm').bootstrapValidator();</span><span class="sc41">
+    </span><span class="sc50">});</span><span class="sc41">
+    
+    </span><span class="sc43">// firefox中离开事件失效，采用该写法兼容</span><span class="sc41">
+    </span><span class="sc46">window.onbeforeunload</span><span class="sc50">=</span><span class="sc47">function</span><span class="sc41"> </span><span class="sc46">checkLeave</span><span class="sc50">(</span><span class="sc46">e</span><span class="sc50">){</span><span class="sc41">  
+        </span><span class="sc43">//var eevt = e ? e : (window.event ? window.event : null);  //此方法为了在firefox中的兼容  </span><span class="sc41">
+            </span><span class="sc46">bvInstance.bootstrapValidatorDestroy</span><span class="sc50">();</span><span class="sc41">
+            </span><span class="sc43">//if(!false)evt.returnValue='离开会使编写的内容丢失。';  </span><span class="sc41">
+    </span><span class="sc50">}</span><span class="sc41">
+</span><span class="sc1">&lt;/script&gt;</span><span class="sc0">
+</span><span class="sc1">&lt;/body&gt;</span><span class="sc0">
+</span><span class="sc1">&lt;/html&gt;</span></div></body>
+</html>

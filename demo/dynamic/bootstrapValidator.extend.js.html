@@ -1,0 +1,1093 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc1 {
+	color: #008000;
+}
+.sc2 {
+	color: #008000;
+}
+.sc3 {
+	color: #008080;
+}
+.sc4 {
+	color: #FF8000;
+}
+.sc5 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc6 {
+	color: #808080;
+}
+.sc7 {
+	color: #808080;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc11 {
+}
+.sc14 {
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #CBE9CB; "><span class="sc3">/***
+*   采用闭包方式进行验证
+*   包括name="bvTag"验证和控件绑定验证两种模式
+*   创建实例
+*   var formId ="#addProductFormId";
+*   var bvInstance = BpValidatorExtend();
+*   //var bvInstance = BpValidatorExtend("#addProductFormId");
+*   使用步骤1
+*   *bootstrapValidatorBind 绑定控件
+*   *bootstrapValidatorManualyOpen 开启验证 --&gt;（前台js调用验证实例）
+*   *bootstrapValidatorDestroy 控件销毁
+*   
+*   使用步骤2
+*   *bootstrapValidatorOpen 自动绑定验证到控件通过name属性值；--&gt; 开启验证（前台js调用验证实例）
+*   *bootstrapValidatorDestroy 控件销毁
+*   
+*
+*
+*
+**/</span><span class="sc0">
+
+</span><span class="sc2">//  var opts = {
+//  '#addProductFormId':"formAttribute",
+//  '#myfield':"notEmpty"
+//  };
+//  var bvInstance = BpValidatorExtend("#addProductFormId");
+// $(document).ready(function() {
+//  
+//  // 验证规则绑定
+//  bvInstance.bootstrapValidatorBind(opts);
+//  // 开启验证
+//  bvInstance.bootstrapValidatorManualyOpen();
+// });
+// window.onbeforeunload=function checkLeave(e){  
+//     //var eevt = e ? e : (window.event ? window.event : null);  //此方法为了在firefox中的兼容  
+//      bvInstance.bootstrapValidatorDestroy();
+//         //if(!false)evt.returnValue='离开会使编写的内容丢失。';  
+//     }  
+// function click () {
+//  //调用验证,返回实例
+//  var bv = bvInstance.bootstrapValidate();
+//  // 执行验证
+//  bv.validate();
+//  if (!bv.isValid()) {
+//      return;
+//  };
+// }
+</span><span class="sc0">
+</span><span class="sc1">/*  
+调用示例
+    var bvInstance = BpValidatorExtend("#addProductFormId");
+
+*/</span><span class="sc0">
+</span><span class="sc5">function</span><span class="sc0"> </span><span class="sc11">BpValidatorExtend</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+    </span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">model</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+        </span><span class="sc1">/*
+            手动绑定页面控件的验证信息
+            options 格式为{elTag,bindTag} 
+            elTag为控件id, bindTag 为绑定验证规则
+        */</span><span class="sc0">
+        </span><span class="sc1">/*
+        调用示例
+            var opts = {
+            '#addProductFormId':"formAttribute",
+            '#myfield':"notEmpty"
+            };
+             $(document).ready(function() {
+                
+                // 验证规则绑定
+                bvInstance.bootstrapValidatorBind(opts);
+                // 开启验证
+                bvInstance.bootstrapValidatorManualyOpen();
+             });
+         */</span><span class="sc0">
+        </span><span class="sc11">bootstrapValidatorBind</span><span class="sc10">:</span><span class="sc5">function</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">options</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">// 排除异常
+</span><span class="sc0">            </span><span class="sc5">if</span><span class="sc10">(!</span><span class="sc11">options</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc5">return</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc2">// 验证信息提示列表，需要添加时先查找有没有现成的，去重复操作;
+</span><span class="sc0">            </span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">msglist</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc7">'msg01'</span><span class="sc10">:</span><span class="sc6">"This value is not valid"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg02'</span><span class="sc10">:</span><span class="sc6">"The input value is required and cannot be empty"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg03'</span><span class="sc10">:</span><span class="sc6">"The username is not valid"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg04'</span><span class="sc10">:</span><span class="sc6">"The username is required and cannot be empty"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg05'</span><span class="sc10">:</span><span class="sc6">"The input keywords must be less than 30 characters long"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg06'</span><span class="sc10">:</span><span class="sc6">"The username and password cannot be the same as each other"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg07'</span><span class="sc10">:</span><span class="sc6">"The username is not available"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg08'</span><span class="sc10">:</span><span class="sc6">"The input is not a valid email address"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg09'</span><span class="sc10">:</span><span class="sc6">"输入数值不合法，不能输入字母，下划线，首位不能输入0 !"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg10'</span><span class="sc10">:</span><span class="sc6">"输入不合法，只能输入字母，数字，下划线 !"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'msg11'</span><span class="sc10">:</span><span class="sc6">"输入不合法，只能输入数字!"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc7">'getMsg'</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc5">function</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">key</span><span class="sc10">,</span><span class="sc11">val</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    
+                </span><span class="sc10">},</span><span class="sc0">
+            </span><span class="sc10">},</span><span class="sc0">
+            </span><span class="sc2">// 验证规则属性列表
+</span><span class="sc0">            </span><span class="sc11">fields</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">formAttribute</span><span class="sc10">:{</span><span class="sc0">
+                     </span><span class="sc7">'data-bv-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg01'</span><span class="sc10">],</span><span class="sc0">
+                     </span><span class="sc7">'data-bv-feedbackicons-valid'</span><span class="sc10">:</span><span class="sc6">"glyphicon glyphicon-ok"</span><span class="sc10">,</span><span class="sc0">
+                     </span><span class="sc7">'data-bv-feedbackicons-invalid'</span><span class="sc10">:</span><span class="sc6">"glyphicon glyphicon-remove"</span><span class="sc10">,</span><span class="sc0">
+                     </span><span class="sc7">'data-bv-feedbackicons-validating'</span><span class="sc10">:</span><span class="sc6">"glyphicon glyphicon-refresh"</span><span class="sc10">,</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">// Check if the value is empty.
+</span><span class="sc0">                </span><span class="sc11">notEmpty</span><span class="sc10">:{</span><span class="sc0">
+                    </span><span class="sc7">'required'</span><span class="sc10">:</span><span class="sc6">"required"</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-notempty-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg02'</span><span class="sc10">],</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">username</span><span class="sc10">:{</span><span class="sc0">
+                    </span><span class="sc7">'required'</span><span class="sc10">:</span><span class="sc6">"required"</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg03'</span><span class="sc10">],</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-notempty-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg04'</span><span class="sc10">],</span><span class="sc0">
+                    </span><span class="sc7">'pattern'</span><span class="sc10">:</span><span class="sc6">"^[a-zA-Z0-9]+$"</span><span class="sc10">,</span><span class="sc0"> 
+                    </span><span class="sc7">'data-bv-regexp-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg04'</span><span class="sc10">],</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-stringlength'</span><span class="sc10">:</span><span class="sc6">"true"</span><span class="sc10">,</span><span class="sc0"> 
+                    </span><span class="sc7">'data-bv-stringlength-min'</span><span class="sc10">:</span><span class="sc6">"6"</span><span class="sc10">,</span><span class="sc0"> 
+                    </span><span class="sc7">'data-bv-stringlength-max'</span><span class="sc10">:</span><span class="sc6">"30"</span><span class="sc10">,</span><span class="sc0"> 
+                    </span><span class="sc7">'data-bv-stringlength-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg05'</span><span class="sc10">],</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-different'</span><span class="sc10">:</span><span class="sc6">"true"</span><span class="sc10">,</span><span class="sc0"> 
+                    </span><span class="sc7">'data-bv-different-field'</span><span class="sc10">:</span><span class="sc6">"password"</span><span class="sc10">,</span><span class="sc0"> 
+                    </span><span class="sc7">'data-bv-different-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg06'</span><span class="sc10">],</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-remote'</span><span class="sc10">:</span><span class="sc6">"true"</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-remote-url'</span><span class="sc10">:</span><span class="sc6">"XXX.php"</span><span class="sc0"> </span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-remote-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg07'</span><span class="sc10">],</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">length40</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-stringlength'</span><span class="sc10">:</span><span class="sc6">"true"</span><span class="sc10">,</span><span class="sc0"> 
+                    </span><span class="sc7">'data-bv-stringlength-max'</span><span class="sc10">:</span><span class="sc6">"40"</span><span class="sc10">,</span><span class="sc0"> 
+                    </span><span class="sc7">'data-bv-stringlength-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg05'</span><span class="sc10">],</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">email</span><span class="sc10">:{</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-emailaddress-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg08'</span><span class="sc10">],</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                
+                </span><span class="sc2">// 验证尺寸cm，重量g
+</span><span class="sc0">                </span><span class="sc11">number4</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc7">'maxLength'</span><span class="sc10">:</span><span class="sc4">7</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'pattern'</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"^[1-9]{1}[0-9]{3}.[0-9]{2}|[1-9]{1}[0-9]{3}$"</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-regexp-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg09'</span><span class="sc10">],</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">// 字母，数字，下划线
+</span><span class="sc0">                </span><span class="sc11">noChinese</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc7">'pattern'</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"^[1-9][a-z][A-Z]$"</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-regexp-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg10'</span><span class="sc10">],</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">// 只能输入数字
+</span><span class="sc0">                </span><span class="sc11">numberOnly</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc7">'pattern'</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"^\\d{0,}$"</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-regexp-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg11'</span><span class="sc10">],</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">// 验证价格
+</span><span class="sc0">                </span><span class="sc11">number5</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc7">'maxLength'</span><span class="sc10">:</span><span class="sc4">8</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'pattern'</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"^[1-9]{1}[0-9]{4}.[0-9]{2}|[1-9]{1}[0-9]{4}$"</span><span class="sc10">,</span><span class="sc0">
+                    </span><span class="sc7">'data-bv-regexp-message'</span><span class="sc10">:</span><span class="sc11">msglist</span><span class="sc10">[</span><span class="sc7">'msg09'</span><span class="sc10">],</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">Password</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">setLength</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc5">function</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">len</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc6">"maxLength"</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc11">len</span><span class="sc10">};</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+                
+            </span><span class="sc10">};</span><span class="sc0">
+            </span><span class="sc2">// 批量设置页面验证控件属性绑定操作
+</span><span class="sc0">            </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">ruleTag</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc11">options</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">options</span><span class="sc10">[</span><span class="sc11">ruleTag</span><span class="sc10">];</span><span class="sc0">
+                </span><span class="sc2">// 判断类型为object还是string
+</span><span class="sc0">                </span><span class="sc2">// 对一组标签绑定一组规则
+</span><span class="sc0">                </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc5">typeof</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">===</span><span class="sc0"> </span><span class="sc7">'object'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc2">// 遍历该数组对象的索引值，做规则绑定
+</span><span class="sc0">                    </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">idx</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc2">//this.bind(elTag,ruleTag);
+</span><span class="sc0">                        </span><span class="sc2">// 取得控件元素，取得绑定验证规则名称
+</span><span class="sc0">                        </span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">el</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc7">'#'</span><span class="sc10">+</span><span class="sc11">data</span><span class="sc10">[</span><span class="sc11">idx</span><span class="sc10">])[</span><span class="sc4">0</span><span class="sc10">],</span><span class="sc11">currentBindTag</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">fields</span><span class="sc10">[</span><span class="sc11">ruleTag</span><span class="sc10">];</span><span class="sc0">
+                        </span><span class="sc2">//this.bootstrapValidateAddField("#saveProductFormId",el.name);
+</span><span class="sc0">                            </span><span class="sc11">console</span><span class="sc10">.</span><span class="sc11">log</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc10">[</span><span class="sc11">idx</span><span class="sc10">]);</span><span class="sc0">
+                        </span><span class="sc2">//fields.bind.apply(el.attributes,[el,bindTag]);
+</span><span class="sc0">                        </span><span class="sc2">// 将验证规则属性加入到原型链中
+</span><span class="sc0">                        </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc11">obj</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc11">currentBindTag</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">el</span><span class="sc10">.</span><span class="sc11">setAttribute</span><span class="sc10">(</span><span class="sc11">obj</span><span class="sc10">,</span><span class="sc11">currentBindTag</span><span class="sc10">[</span><span class="sc11">obj</span><span class="sc10">]);</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0"> 
+                </span><span class="sc2">//对一个标签绑定一组规则
+</span><span class="sc0">                </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc5">typeof</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">===</span><span class="sc0"> </span><span class="sc7">'string'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc2">//this.bind(data,ruleTag);
+</span><span class="sc0">                    </span><span class="sc2">// 取得控件元素，取得绑定验证规则名称
+</span><span class="sc0">                    </span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">el</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc7">'#'</span><span class="sc10">+</span><span class="sc11">data</span><span class="sc10">)[</span><span class="sc4">0</span><span class="sc10">],</span><span class="sc11">currentBindTag</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">fields</span><span class="sc10">[</span><span class="sc11">ruleTag</span><span class="sc10">];</span><span class="sc0">
+                    </span><span class="sc2">//fields.bind.apply(el.attributes,[el,bindTag]);
+</span><span class="sc0">                    </span><span class="sc2">// 将验证规则属性加入到原型链中
+</span><span class="sc0">                    </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc11">obj</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc11">currentBindTag</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">el</span><span class="sc10">.</span><span class="sc11">setAttribute</span><span class="sc10">(</span><span class="sc11">obj</span><span class="sc10">,</span><span class="sc11">currentBindTag</span><span class="sc10">[</span><span class="sc11">obj</span><span class="sc10">]);</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+            
+        </span><span class="sc10">},</span><span class="sc0">
+        </span><span class="sc3">/**
+        *
+        *   elTag 控件id
+        *   ruleTag 规则名称
+        *   实现对页面控件增加用户自定义属性，将属性加入attributes原型链中,成为原生属性
+        */</span><span class="sc0">
+        </span><span class="sc11">bind</span><span class="sc0"> </span><span class="sc10">:</span><span class="sc0"> </span><span class="sc5">function</span><span class="sc10">(</span><span class="sc11">elTag</span><span class="sc10">,</span><span class="sc11">ruleTag</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc2">// 取得控件元素，取得绑定验证规则名称
+</span><span class="sc0">            </span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">el</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc7">'#'</span><span class="sc10">+</span><span class="sc11">elTag</span><span class="sc10">)[</span><span class="sc4">0</span><span class="sc10">],</span><span class="sc11">currentBindTag</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">fields</span><span class="sc10">[</span><span class="sc11">ruleTag</span><span class="sc10">];</span><span class="sc0">
+            </span><span class="sc2">//fields.bind.apply(el.attributes,[el,bindTag]);
+</span><span class="sc0">            </span><span class="sc2">// 将验证规则属性加入到原型链中
+</span><span class="sc0">            </span><span class="sc5">for</span><span class="sc10">(</span><span class="sc11">obj</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc11">currentBindTag</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">el</span><span class="sc10">.</span><span class="sc11">setAttribute</span><span class="sc10">(</span><span class="sc11">obj</span><span class="sc10">,</span><span class="sc11">currentBindTag</span><span class="sc10">[</span><span class="sc11">obj</span><span class="sc10">]);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">},</span><span class="sc0">
+        </span><span class="sc1">/*
+            手动开启bootstrap验证，
+            开启前先执行fn:bootstrapValidatorBind method
+        */</span><span class="sc0">
+        </span><span class="sc11">bootstrapValidatorManualyOpen</span><span class="sc10">:</span><span class="sc5">function</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">();</span><span class="sc0">
+                </span><span class="sc11">console</span><span class="sc10">.</span><span class="sc11">log</span><span class="sc10">(</span><span class="sc6">"bootstrapValidatorManualyOpen if"</span><span class="sc10">+</span><span class="sc11">formId</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc7">'.form-horizontal'</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">();</span><span class="sc0">
+                </span><span class="sc11">console</span><span class="sc10">.</span><span class="sc11">log</span><span class="sc10">(</span><span class="sc6">"bootstrapValidatorManualyOpen else"</span><span class="sc10">+</span><span class="sc11">formId</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">},</span><span class="sc0">
+        </span><span class="sc1">/*bootstrapValidatorOpen();初始化验证模块
+         * &lt;link href="js/bootstrapvalidator/bootstrapValidator.min.css" rel="stylesheet"&gt;
+         * &lt;script src="js/bootstrapValidator/bootstrapValidator.min.js" &gt;&lt;/script&gt;
+         *验证模块使用规范如下
+         * &lt;div class="form-horizontal"&gt;
+         *     &lt;div class="form-group"&gt;&lt;!--ms-view:maintain@--&gt;
+         *          &lt;input class="form-control" name="对应的fieldsName,例如processResult"/&gt;
+         *     &lt;/div&gt;
+         * &lt;/div&gt;
+         */</span><span class="sc0">
+         </span><span class="sc3">/**    验证模块js端
+         *
+         *          $(document).ready(function(){
+         *                  var bvcheck = BpValidatorExtend();
+         *                  bvcheck.bootstrapValidatorOpen(".wrapper");
+         *              });
+                    // 如果是submit类型的控件，就不需要做手动验证，如果验证不通过，submit按钮自动灰掉
+         *          function myclick () {
+         *                  //调用验证写法
+         *                  //var bv = $('.form-horizontal').data('bootstrapValidator');
+         *                  //bv.validate();
+         *                  if (!bv.isValid()) {
+         *                      return;
+         *                  };
+         *                  
+         *          }
+         *          function closePage(){
+         *                  bvcheck.bootstrapValidatorDestroy(".wrapper");
+         *          }
+         */</span><span class="sc0">
+
+        </span><span class="sc11">bootstrapValidatorOpen</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc5">function</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+
+                </span><span class="sc2">//processResult: {//控件对应名称
+</span><span class="sc0">                </span><span class="sc2">//    validators: {//配置验证项目
+</span><span class="sc0">                </span><span class="sc2">//        notEmpty: {}//不允许为空
+</span><span class="sc0">                </span><span class="sc2">//        regexp: {//验证格式
+</span><span class="sc0">                </span><span class="sc2">//              regexp:/^(^0\d{2}-?\d{8}$)|(^0\d{3}-?\d{7}$)|(^\(0\d{2}\)-?\d{8}$)|(^\(0\d{3}\)-?\d{7}$)$/,
+</span><span class="sc0">                </span><span class="sc2">//              message: '请输入正确的联系方式'
+</span><span class="sc0">                </span><span class="sc2">//        },
+</span><span class="sc0">                </span><span class="sc2">//        stringLength: {//验证长度，注意避免与input自身的maxlength属性冲突
+</span><span class="sc0">                </span><span class="sc2">//              max:10
+</span><span class="sc0">                </span><span class="sc2">//        }
+</span><span class="sc0">                </span><span class="sc2">//    }
+</span><span class="sc0">                </span><span class="sc2">//},
+</span><span class="sc0">            </span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">fields</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc2">//必填内容
+</span><span class="sc0">                </span><span class="sc11">content</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用文本验证
+</span><span class="sc0">                </span><span class="sc11">txt</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^([\u4E00-\u9FFF]|[()（）])+$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确格式'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用汉字验证
+</span><span class="sc0">                </span><span class="sc11">chinese</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^([\u4E00-\u9FFF]|[()（）])+$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入汉字'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用数字验证
+</span><span class="sc0">                </span><span class="sc11">number</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\+?[0-9]*$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入数字'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用日期验证
+</span><span class="sc0">                </span><span class="sc11">endDate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//结束日期
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'startDate'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'2055-01-01'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">startDate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//开始日期
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'2000-01-01'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'endDate'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">withinDate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//中间日期
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'startDate'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'endDate'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">anyDate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//任意日期
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'2000-01-01'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'2055-01-01'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用网址验证
+</span><span class="sc0">                </span><span class="sc11">website</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//验证www开头
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc2">//regexp: /^\/\/[wW]{3}\.[\w-]+\.\w{2,4}(\/.*)?$/,
+</span><span class="sc0">                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[wW]{3}\.[\w-]+\.\w{2,4}(\/.*)?$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的网址'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">site</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证http://开头的网址
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^(([hH][tT]{2}[pP][sS]?)|([fF][tT][pP]))\:\/\/[wW]{3}\.[\w-]+\.\w{2,4}(\/.*)?$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的网址'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用手机验证
+</span><span class="sc0">                </span><span class="sc11">cellphone</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^1[1-9]\d{9}$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的手机号码'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用下拉框验证
+</span><span class="sc0">                </span><span class="sc11">selectValidate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/[12]/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入1,2
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请选择正确项'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用验证中文或英文
+</span><span class="sc0">                </span><span class="sc11">chineseOrEnglish</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[a-zA-Z\u4e00-\u9fa5]+$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入中文或英文'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用验证中文或英文或数字
+</span><span class="sc0">                </span><span class="sc11">chineseOrEnglishorNumber</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc2">//regexp: /^[0-9a-zA-Z\u2E80-\u9FFF]+$/,
+</span><span class="sc0">                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[0-9a-zA-Z\u4e00-\u9fa5]+$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入中文或英文或数字'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">department</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                         </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">12</span><span class="sc0">
+                       </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[0-9a-zA-Z\u4e00-\u9fa5]+$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入中文或英文或数字'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用验证邮件
+</span><span class="sc0">                </span><span class="sc11">mail</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+(\.[a-zA-Z]{2,3})+$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的邮箱'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用qq验证
+</span><span class="sc0">                </span><span class="sc11">qq</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//长度为5到10。
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d{5,10}$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的QQ'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//通用skype验证
+</span><span class="sc0">                </span><span class="sc11">skype</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//长度为8。
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d{8}$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的Skype'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+
+                </span><span class="sc11">tel</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证手机--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^1[1-9]\d{9}$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的联系方式'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+
+                </span><span class="sc11">contactBirthdar</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//日历为必填项
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">processResult</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//处理结果
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">description</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//描述
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">officeTel</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//办公电话  加有分机号
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc14">/^(0[0-9]{2,3}\-)?([2-9][0-9]{6,7})+(\-[0-9]{1,4})?$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'格式为：010-00000000-0000'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">familyTel</span><span class="sc10">:{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc14">/^(^0\d{2}-?\d{8}$)|(^0\d{3}-?\d{7}$)|(^\(0\d{2}\)-?\d{8}$)|(^\(0\d{3}\)-?\d{7}$)$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'格式为：010-11111111'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">contractCode</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//合同编号
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">contractTitle</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//合同标题
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">pro</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//所在省份--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">city</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//所在城市--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">account</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//账户--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"必选项目"</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">accountContent</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//账户--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">64</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">insurance</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//险金--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"必选项目"</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">retroactiveMonths</span><span class="sc10">:{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+</span><span class="sc2">//                      notEmpty: {
+//                          message: "必选项目"
+//                      },
+</span><span class="sc0">                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">2</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\+?[1-99]*$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入[1-99]整数'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">supplierName</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//伙伴名称--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^([\u4E00-\u9FFF]|[()（）])+$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入中文名称'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+
+                </span><span class="sc11">pro</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//所在省份--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">legal</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//注册资本--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">10</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">tax</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//传真号码--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">digits</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">8</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">iknowId</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//企业账号--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">9</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\+?[1-9][0-9]*$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的号码'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">regCode</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//执照号码--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc4">20</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\+?[1-9][0-9]*$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的号码'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">numberCodes</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//正整数验证
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">digits</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">10</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">serviceEmCount</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//服务正整数验证
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">digits</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">5</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">numberCodeDependency</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//正整数验证(被依赖项)--[partner-add.js]  分数
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">digits</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">numberCode</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//正整数验证(依赖项)--[partner-add.js]  总数
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">digits</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">lessThan</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"numberCodeDependency"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">background</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//公司背景--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">100</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">remark</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//备注--[partner-add.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">200</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">ownerCompany</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">64</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[a-zA-Z\u4e00-\u9fa5]+[a-zA-Z\u4e00-\u9fa5\u0020]*$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入中文或英文'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">companyBaseLowest</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">lessThan</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"companyBaseHighest"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">companyRate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">personalBaseLowest</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">lessThan</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"personalBaseHighest"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">personalRate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">companyBaseHighest</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证个人基数上限
+</span><span class="sc0">                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">greaterThan</span><span class="sc10">:{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc6">"companyBaseLowest"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">personalBaseHighest</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证个人基数上限
+</span><span class="sc0">                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">greaterThan</span><span class="sc10">:{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc6">"personalBaseLowest"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">companyPartBaseHighest</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证个人基数上限
+</span><span class="sc0">                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">greaterThan</span><span class="sc10">:{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc6">"companyPartBaseLowest"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">personalPartBaseHighest</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证个人基数上限
+</span><span class="sc0">                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">greaterThan</span><span class="sc10">:{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc6">"personalPartBaseLowest"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">companyPartBaseLowest</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证个人基数上限
+</span><span class="sc0">                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">lessThan</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"companyPartBaseHighest"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">companyPartRate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证个人基数上限
+</span><span class="sc0">                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">personalPartBaseLowest</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证个人基数上限
+</span><span class="sc0">                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">lessThan</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">value</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc6">"personalPartBaseHighest"</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">personalPartRate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[partnerInfo-produce-editInsurance.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//验证个人基数上限
+</span><span class="sc0">                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">0</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">18</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^\d+(\.\d{1,4})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~4位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的比例或基数'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc2">//添加记录--功过记录类型
+</span><span class="sc0">                </span><span class="sc11">recordType</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/[^0]/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//不能输入0
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请选择正确项'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+
+                </span><span class="sc2">//添加服务[add-service.js]
+</span><span class="sc0">                </span><span class="sc11">serviceContentId</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">specificCity</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[add-service.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">registeredCapital</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//注册资本
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">8</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">serviceStartDate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[add-service.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'1900-01-01'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'serviceEndDate'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">serviceEndDate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//--[add-service.js]
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'serviceStartDate'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'2055-01-01'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">serviceFixedPrice</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//固定价格
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+</span><span class="sc2">//                          regexp: /^[0-9]+.([0-9]{1,2})?$/, //只能输入有1~2位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[0-9]{1,5}(\.\d{1,2})?$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的价格(99999.99)'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">servicePersonCount</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">digits</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[1-9]\d{0,8}$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//第一位不能是0的正整数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确人数'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">servicePrice</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//个人价格
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[0-9]{1,5}(\.\d{1,2})?$/</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">//只能输入有1~2位小数的正实数
+</span><span class="sc0">                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入正确的价格(99999.99)'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">contractEnd</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//合同结束日期
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'contractStart'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'2055-01-01'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">contractStart</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//合同开始日期
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'1900-01-01'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'contractEnd'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">contractSign</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc2">//合同签约日期
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                        </span><span class="sc11">date</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">format</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'YYYY-MM-DD'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">min</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'contractStart'</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'contractEnd'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+
+
+                </span><span class="sc2">//派单规则
+</span><span class="sc0">                </span><span class="sc11">distributionSendPack</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//派单规则发包方
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">distributionCity</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//派单规则城市
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">distributionSupplier</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//派单规则接包方
+</span><span class="sc0">                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{},</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+
+                </span><span class="sc2">//曾委派机构[partnerInfo-detail-department.js]
+</span><span class="sc0">                </span><span class="sc11">supplierCopartnerName</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">stringLength</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc11">max</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc4">30</span><span class="sc0">
+                        </span><span class="sc10">},</span><span class="sc0">
+                        </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                            </span><span class="sc2">//regexp: /^[0-9a-zA-Z\u2E80-\u9FFF]+$/,
+</span><span class="sc0">                            </span><span class="sc11">regexp</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc14">/^[0-9a-zA-Z\u4e00-\u9fa5]+$/</span><span class="sc10">,</span><span class="sc0">
+                            </span><span class="sc11">message</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'请输入中文或英文或数字'</span><span class="sc0">
+                        </span><span class="sc10">}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">supplierCopartnerProvince</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">},</span><span class="sc0">
+                </span><span class="sc11">supplierCopartnerCity</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                    </span><span class="sc11">validators</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">notEmpty</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{}</span><span class="sc0">
+                    </span><span class="sc10">}</span><span class="sc0">
+                </span><span class="sc10">}</span><span class="sc0">
+
+            </span><span class="sc10">}</span><span class="sc0">
+
+            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">({</span><span class="sc0">
+                    </span><span class="sc11">feedbackIcons</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">valid</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'icon icon-check'</span><span class="sc10">,</span><span class="sc0">
+                        </span><span class="sc11">invalid</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'icon icon-remove'</span><span class="sc10">,</span><span class="sc0">
+                        </span><span class="sc11">validating</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'icon icon-refresh'</span><span class="sc0">
+                    </span><span class="sc10">},</span><span class="sc0">
+                    </span><span class="sc11">fields</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc11">fields</span><span class="sc0">
+                </span><span class="sc10">});</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc7">'.form-horizontal'</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">({</span><span class="sc0">
+                    </span><span class="sc11">feedbackIcons</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc11">valid</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'icon icon-check'</span><span class="sc10">,</span><span class="sc0">
+                        </span><span class="sc11">invalid</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'icon icon-remove'</span><span class="sc10">,</span><span class="sc0">
+                        </span><span class="sc11">validating</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc7">'icon icon-refresh'</span><span class="sc0">
+                    </span><span class="sc10">},</span><span class="sc0">
+                    </span><span class="sc11">fields</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc11">fields</span><span class="sc0">
+                </span><span class="sc10">});</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">},</span><span class="sc0">
+
+        </span><span class="sc2">//通用输入改变日期
+</span><span class="sc0">        </span><span class="sc11">dateFieldChange</span><span class="sc10">:</span><span class="sc5">function</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">){</span><span class="sc0">
+            </span><span class="sc5">if</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">(</span><span class="sc7">'revalidateField'</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc7">'startDate'</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">(</span><span class="sc7">'revalidateField'</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc7">'endDate'</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc7">'.form-horizontal'</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">(</span><span class="sc7">'revalidateField'</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc7">'startDate'</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc7">'.form-horizontal'</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">(</span><span class="sc7">'revalidateField'</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc7">'endDate'</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+        </span><span class="sc10">},</span><span class="sc0">
+        </span><span class="sc11">bootstrapValidatorDestroy</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc5">function</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0"> </span><span class="sc2">//控件销毁
+</span><span class="sc0">
+            </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">console</span><span class="sc10">.</span><span class="sc11">log</span><span class="sc10">(</span><span class="sc6">"bootstrapValidatorDestroy if"</span><span class="sc10">+</span><span class="sc11">formId</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">).</span><span class="sc11">data</span><span class="sc10">(</span><span class="sc7">'bootstrapValidator'</span><span class="sc10">).</span><span class="sc11">destroy</span><span class="sc10">()</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0"> </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                </span><span class="sc11">console</span><span class="sc10">.</span><span class="sc11">log</span><span class="sc10">(</span><span class="sc6">"bootstrapValidatorDestroy else"</span><span class="sc10">+</span><span class="sc11">formId</span><span class="sc10">);</span><span class="sc0">
+                </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc7">'.form-horizontal'</span><span class="sc10">).</span><span class="sc11">data</span><span class="sc10">(</span><span class="sc7">'bootstrapValidator'</span><span class="sc10">).</span><span class="sc11">destroy</span><span class="sc10">()</span><span class="sc0">
+            </span><span class="sc10">}</span><span class="sc0">
+
+        </span><span class="sc10">},</span><span class="sc0">
+        
+        </span><span class="sc1">/*调用验证
+        var bv = bvInstance.bootstrapValidate();
+        bv.validate();
+        if (!bv.isValid()) {
+            return;
+        };
+        */</span><span class="sc0">
+        </span><span class="sc11">bootstrapValidate</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc5">function</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+            </span><span class="sc5">var</span><span class="sc0"> </span><span class="sc11">bvobj</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">).</span><span class="sc11">data</span><span class="sc10">(</span><span class="sc7">'bootstrapValidator'</span><span class="sc10">);</span><span class="sc0">
+            </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">bvobj</span><span class="sc10">;</span><span class="sc0">
+        </span><span class="sc10">},</span><span class="sc0">
+        </span><span class="sc11">bootstrapValidateAddField</span><span class="sc10">:</span><span class="sc0"> </span><span class="sc5">function</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">,</span><span class="sc11">labelName</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc10">{</span><span class="sc0">
+                        </span><span class="sc5">debugger</span><span class="sc10">;</span><span class="sc0">
+            </span><span class="sc11">$</span><span class="sc10">(</span><span class="sc11">formId</span><span class="sc10">).</span><span class="sc11">bootstrapValidator</span><span class="sc10">(</span><span class="sc7">'addField'</span><span class="sc10">,</span><span class="sc11">labelName</span><span class="sc10">);</span><span class="sc0">
+        </span><span class="sc10">}</span><span class="sc0">
+    </span><span class="sc10">};</span><span class="sc0">
+    </span><span class="sc5">return</span><span class="sc0"> </span><span class="sc11">model</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc10">}</span><span class="sc0">
+
+</span></div></body>
+</html>
